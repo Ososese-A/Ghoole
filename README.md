@@ -1,0 +1,1 @@
+Ghoole is an application that helps in the management of stock portfolio of users. It was build based on the concept used to develop my earlier mini project the stock monitor although the stock monitor was build with python and ghoole was build with JavaScript
