@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Barlow", sans-serif;
+}
+
+body {
+  background-color: #1a1a1a;
+  color: theme("colors.gho-white");
+  overflow-x: hidden;
+}
+
+#stock_search {
+  padding: 0rem 1rem;
+}
+
+#text_field_space {
+  padding: 0rem 1rem;
+}
+
+.tile_width {
+  max-width: 48rem;
+}
+
+.tile_case_width {
+  width: 51rem;
+}
+
+.pop_up {
+  position: fixed; 
+  top: 50%; left: 50%; 
+  transform: translate(-50%, -50%);
+}

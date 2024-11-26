@@ -1,0 +1,58 @@
+{
+    "stocks" : [
+        {
+            "Symb" : "WBD",
+            "price" : 8.36,
+            "name" : "Warner Bros Discovery Inc.",
+            "percent_change" : -1.76,
+            "price_change" : -0.05,
+            "date" : "11/16/2024",
+            "time" : "12:31"
+        },
+        {
+            "Symb" : "WKHS",
+            "price" : 0.77,
+            "name" : "Workhorse Group Inc.",
+            "percent_change" : -0.54,
+            "price_change" : -0.01,
+            "date" : "11/16/2024",
+            "time" : "12:31"
+        },
+        {
+            "Symb" : "UA",
+            "price" : 7.60,
+            "name" : "Under Armour Inc.",
+            "percent_change" : 0.11,
+            "price_change" : 1.47,
+            "date" : "11/16/2024",
+            "time" : "12:31"
+        },
+        {
+            "Symb" : "AVGO",
+            "price" : 169.62,
+            "name" : "Broadcom Inc.",
+            "percent_change" : 1.31,
+            "price_change" : 2.20,
+            "date" : "11/16/2024",
+            "time" : "12:31"
+        },
+        {
+            "Symb" : "AMZN",
+            "price" : 171.17,
+            "name" : "Amazon.com Inc.",
+            "percent_change" : -0.38,
+            "price_change" : -1.89,
+            "date" : "11/16/2024",
+            "time" : "12:32"
+        },
+        {
+            "Symb" : "ORCL",
+            "price" : 115.74,
+            "name" : "Oracle Corporation",
+            "percent_change" : -0.74,
+            "price_change" : -0.04,
+            "date" : "11/16/2024",
+            "time" : "12:31"
+        }
+    ]
+}
