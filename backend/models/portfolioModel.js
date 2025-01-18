@@ -11,6 +11,11 @@ const portfolioSchema = new Schema(
         name: {
             type: String,
             required: true
+        }, 
+
+        profile: {
+            type: [Schema.Types.ObjectId],
+            ref: 'stocks'
         }
     },
     {

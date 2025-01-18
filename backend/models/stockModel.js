@@ -6,6 +6,15 @@ const stockSchema = new Schema({
         symb: {
             type: String,
             required: true
+        },
+
+        stockName: {
+            type: String,
+            required: true
+        },
+        
+        portfolio: {
+            type: Schema.Types.ObjectId,
         }
     }, {
         timestamps: true

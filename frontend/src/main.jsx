@@ -5,9 +5,8 @@ import App from './App.jsx'
 import { StockContextProvider } from './context/stockContext.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+
     <StockContextProvider>
     <App />
     </StockContextProvider>
-  </StrictMode>,
 )

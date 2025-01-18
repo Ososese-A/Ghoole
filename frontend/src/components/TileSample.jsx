@@ -1,4 +1,4 @@
-const Tile = ({symb, price, percent_change, price_change, stock_name, date, time}) => {
+const TileSample = ({symb, price, percent_change, price_change, stock_name, date, time}) => {
     return (
         <>
         <div className="px-8 my-16">
@@ -24,4 +24,4 @@ const Tile = ({symb, price, percent_change, price_change, stock_name, date, time
     )
 }
 
-export default Tile
+export default TileSample

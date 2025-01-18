@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const stockRoute = require('./routes/stockRoute')
 const portfolioRoute = require('./routes/portfolioRoute')
+const backlogRoute = require('./routes/backlogRoute')
 const cors = require('cors')
 const mongoose = require('mongoose')
 
@@ -17,6 +18,7 @@ app.use((req, res, next) => {
 
 app.use('/api/stock/', stockRoute)
 app.use('/api/portfolio/', portfolioRoute)
+app.use('/api/backlog/', backlogRoute)
 
 
 app.get('/', (req, res) => {

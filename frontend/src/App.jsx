@@ -14,7 +14,6 @@ const App = () => {
       <AppBarA/>
       <Search />
       <PageLabel/>
-      <SumValue/>
       <FloatBtn />
       <StockList />
       {/* <StockListSample /> */}

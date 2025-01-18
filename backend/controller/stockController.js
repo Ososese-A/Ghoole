@@ -1,11 +1,15 @@
+const path = require('path')
+const fs = require('fs').promises
+
 const Stocks = require('../models/stockModel')
 
 const mongoose = require('mongoose')
+const { json } = require('express')
 
 //finding all the stocks from the database
 //sending the stocks once the response is ok (200)
 const getStocks = async (req, res) => {
-    const stocks = await Stocks.find()
+    const stocks = await Stocks.find({}).sort({createdAt: -1})
 
     res.status(200).json(stocks)
 }
@@ -31,25 +35,56 @@ const getStock = async (req, res) => {
     res.status(200).json(stock)
 }
 
+const getSample = async (req, res) => {
+    filePath = path.join(__dirname, '..' ,'stockData.json')
+    fileContent = await fs.readFile(filePath)
+    jsonData = JSON.parse(fileContent)
+    return res.status(200).json(jsonData)
+}
+
 //get the stock symbol from the request body by way of destructuring 
 //using an empyFields array, if statements to push text into the arrays and if statements to show error on status 400 when the array length is > 0
 //try to create a stock to the model passing the symbol and then respond ok (200) and pass the stock as json
 //catch and respond with the error
+// const addStock = async (req, res) => {
+//     const {symb} = req.body
+
+//     let emptyFields = []
+
+//     if (!symb) {
+//         emptyFields.push('symb')
+//     }
+
+//     if (emptyFields.length > 0) {
+//         res.status(400).json({error: 'Please fill in all the empty fields', emptyFields})
+//     }
+
+//     try {
+//         const stock = await Stocks.create({symb})
+//         res.status(200).json({stock})
+//     } catch (error) {
+//         res.status(400).json({error: error.message})
+//     }
+// }
 const addStock = async (req, res) => {
     const {symb} = req.body
+    const {stockName} = req.body
+    console.log(symb)
+    console.log(stockName)
 
-    let emptyFields = []
+    // let emptyFields = []
 
-    if (!symb) {
-        emptyFields.push('symb')
-    }
+    // if (!symb) {
+    //     console.log(symb)
+    //     emptyFields.push('symb')
+    // }
 
-    if (emptyFields.length > 0) {
-        res.status(400).json({error: 'Please fill in all the empty fields', emptyFields})
-    }
+    // if (emptyFields.length > 0) {
+    //     res.status(400).json({error: 'Please fill in all the empty fields', emptyFields})
+    // }
 
     try {
-        const stock = await Stocks.create({symb})
+        const stock = await Stocks.create({symb, stockName})
         res.status(200).json({stock})
     } catch (error) {
         res.status(400).json({error: error.message})
@@ -80,6 +115,7 @@ const deleteStock = async (req, res) => {
 
 module.exports = {
     getStocks,
+    getSample,
     getStock,
     addStock,
     deleteStock
