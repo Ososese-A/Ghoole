@@ -27,7 +27,7 @@ const StockList = () => {
                 const response = await fetch(url, options)
                 const result = await response.json();
                 setSymbs(result);
-                console.log(result);
+                // console.log(result);
             } catch (error) {
                 console.error(error);
             }
@@ -42,7 +42,7 @@ const StockList = () => {
             try {
                 const response = await fetch(url, options)
                 const result = await response.json()
-                console.log(result)
+                // console.log(result)
                 setPortInfo(result)
             } catch (error) {
             }
@@ -147,8 +147,9 @@ const StockList = () => {
                         portInfo.map(
                             (pinfo) => {
                                 return (
-                                    <GroupTile 
+                                        <GroupTile 
                                         key={pinfo._id} 
+                                        port_id={pinfo._id}
                                         port_symbol={pinfo.symbol} 
                                         port_name={pinfo.name}
                                     />

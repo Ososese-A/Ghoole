@@ -71,19 +71,27 @@ const deletePortfolio = async (req, res) => {
 //respond with the update variable
 const updatePortfolio = async (req, res) => {
     const {id} = req.params
+    const {profile} = req.body
+    const profileAsId = new mongoose.Types.ObjectId(profile)
 
     if(!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({error: 'This portfolio does not exist'})
+    } else {
+        if(!mongoose.Types.ObjectId.isValid(profile)) {
+            return res.status(404).json({error: 'This stock does not exist'})
+        }
     }
 
     const portfolio = await Portfolio.findOneAndUpdate(
         {_id: id}, 
-        { ...req.body }
+        // { $push: {profile: profileAsId} },
+        { $addToSet: {profile: profileAsId} },
+        {new: true}
     )
 
-    if(!portfolio){
-        return res.status(404).json({error: 'This Portfolio does not exist'})
-    }
+    // if(!portfolio){
+    //     return res.status(404).json({error: 'This Portfolio does not exist'})
+    // }
 
     res.status(200).json(portfolio)
 }

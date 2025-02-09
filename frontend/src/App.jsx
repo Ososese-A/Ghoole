@@ -1,23 +1,20 @@
-import AppBarA from "./components/AppBarA";
-import PageLabel from "./components/PageLabel";
-import Search from "./components/Search";
-import StockList from "./components/StockList";
-import SumValue from "./components/SumValue";
-import FloatBtn from "./components/FloatBtn";
-import StockListSample from "./components/StockListSample";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import StockListPortfolioPage from "./pages/StockListPortfolioPage";
+import PageNotFound from "./pages/PageNotFound";
 
 const App = () => {
 
   return ( 
     <>
-      <div className="overflow-x-hidden">
-      <AppBarA/>
-      <Search />
-      <PageLabel/>
-      <FloatBtn />
-      <StockList />
-      {/* <StockListSample /> */}
-      </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />}/>
+        <Route path="/home" element={<HomePage />}/>
+        <Route path="/portfolio/:portfolioId" element={<StockListPortfolioPage />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </Router>
     </>
    );
 }

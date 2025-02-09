@@ -8,14 +8,21 @@ const AddPopUp = ({closePopUp}) => {
     const [optionsView, setOptionsView] = useState(true)
     const [stockOnly, setStockOnly] = useState(false)
     const [portfolioOnly, setPortfolioOnly] = useState(false)
+    const [portName, setPortName] = useState('')
+    const [portSymb, setPortSymb] = useState('')
+    const [portSubmitted, setPortSubmitted] = useState(false)
+    const [portOptions, setPortOptions] = useState([])
     const [stockPortfolio, setStockPortfolio] = useState(false)
     const [symbCheck, setSymbCheck] = useState('')
     const [formSubmitted, setFormSubmitted] = useState(false)
-    const [symb, setSymb] = useState('')
-    const [stockName, setStockName] = useState('')
+    const [stockToPortFormSubmitted, setStockToPortFormSubmitted] = useState(false)
+    const [stockToPortstock, setStockToPortstock] = useState('nill')
+    const [stockToPortportfolio, setStockToPortportfolio] = useState('nill')
     const [addStockError, setAddStockError] = useState('')
     const [addPortNameError, setAddPortNameError] = useState('')
     const [addPortSymbError, setAddPortSymbError] = useState('')
+    const [stockToPortportError, setStockToPortportError] = useState('')
+    const [stockToPortstockError, setStockToPortstockError] = useState('')
 
     const PopUpClose = () => {
         closePopUp(false)
@@ -51,40 +58,6 @@ const AddPopUp = ({closePopUp}) => {
         }
     }
 
-    const addPortToDB = async (e) => {
-        e.preventDefault()
-        const portResFromDb = await getPortInfo()
-        const portResTemp = [portResFromDb]
-        const portRes = portResTemp[0]
-        const portToCheckFor = portRes.map(item => item.symbol)
-
-        if (portToCheckFor.includes(symbCheck)) {
-            setAddPortSymbError(`Portfolio Already added!`)
-        } else {
-            await addToPortDB()
-            PopUpClose()
-        }
-    }
-
-    const addToPortDB = async () => {
-        const portRes = {
-            symbol: symbCheck,
-            //We are deleting synbName Check so this should be portfolio name while we create stockName usestate variable
-            // name: symbNameCheck
-        }
-        console.log(portRes)
-
-        await fetch('http://localhost:4000/api/portfolio/', {
-            method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json'
-            },
-            body: JSON.stringify(portRes)
-        })
-
-        window.location.reload()
-    }
-
     const getPortInfo = async () => {
         const url = 'http://localhost:4000/api/portfolio/'
         const options = {
@@ -94,6 +67,7 @@ const AddPopUp = ({closePopUp}) => {
         try {
             const response = await fetch(url, options)
             const result = await response.json();
+            // console.log(result);
             return result
         } catch (error) {
         }
@@ -104,8 +78,102 @@ const AddPopUp = ({closePopUp}) => {
         setFormSubmitted(true)
     }
 
-    
+    const handleAddPortSubmit = (e) => {
+        e.preventDefault()
+        setPortSubmitted(true)
+    }
 
+    const handleAddStockToPortSubmit = (e) => {
+        e.preventDefault()
+        setStockToPortFormSubmitted(true)
+    }
+
+    useEffect(() => {
+        const getPortOptions = async () => {
+            const initialRes = await getPortInfo()
+            const portRes = [initialRes]
+            const portResB = portRes[0]
+            // console.log(portResB)
+            const portOptionsList = portResB.map(item => item.name)
+            setPortOptions(portOptionsList)
+        }
+
+        try {
+            getPortOptions()
+        } catch (error) {
+            console.error(error)
+        }
+    }, [])
+
+    useEffect(() => {
+        //check if the stock is in the stock the person is monitorin
+        const stockAddedCheck = async () => {
+            const initialRes = await fetchSymbs()
+            const postRes = [initialRes]
+            const postResB = postRes[0]
+            const symbToCheckFor = postResB.map(item => item.symb)
+            const preStockID = postResB.find(stock_id => stock_id.symb === stockToPortstock)
+            const stockId = preStockID ? preStockID._id : null
+
+            if (stockToPortstock == "nill") {
+                console.log(stockToPortstock)
+                setStockToPortstockError(`You need to add the symbol of the stock you would like to add to a Portfolio`)
+                if (stockToPortportfolio == "nill") {
+                    console.log(stockToPortportfolio)
+                    setStockToPortportError(`You need to select the Portfolio you would liek to add a stock to`)
+                }
+            }
+
+            if (symbToCheckFor.includes(stockToPortstock)) {
+                //get the portfolio then add it to the id
+                const initRes = await getPortInfo()
+                const portRes = [initRes]
+                const portResB = portRes[0]
+
+                const prePortId = portResB.find(prePort => prePort.name === stockToPortportfolio);
+
+                const portId = prePortId ? prePortId._id : null;
+
+                const preStockProfile = portResB.find(prePort => prePort._id == portId);
+                const stockProfile = preStockProfile.profile
+
+                if (stockProfile.includes(stockId)) {
+                    setStockToPortstockError(`The stock ${stockToPortstock} has already been added to this Portfolio`)
+                } else {
+                    addToPortInDB(stockId, portId)
+                }
+            } else {
+                console.log(stockToPortstock)
+                console.log(stockToPortportfolio)
+                setStockToPortstockError(`This stock is not in your listing, please add it to your listing before adding it to a portfolio`)
+            }
+        }
+
+        const addToPortInDB = async (stockToBeAddedID, portfolioID) => {
+            const profileRes = {
+                profile : stockToBeAddedID
+            }
+            console.log(`This log goes before we send it to the DB: ${{profileRes}}`)
+
+            await fetch(`http://localhost:4000/api/portfolio/${portfolioID}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify(profileRes)
+            })
+            // console.log(`This is the id: ${portfolioID} and this is the stock ${stockToBeAddedID}`)
+
+            window.location.reload()
+        }
+
+
+        if (stockToPortFormSubmitted) {
+            stockAddedCheck()
+            setStockToPortFormSubmitted(false)
+        }
+        
+    }, [stockToPortFormSubmitted])
 
     useEffect(() => {
         const secondStockCheck = async (stockToDb) => {
@@ -231,6 +299,62 @@ const AddPopUp = ({closePopUp}) => {
 
     }, [formSubmitted]);
 
+
+    useEffect(() => {
+        const checkIfNameIsUnique = async () => {
+            const initialRes = await getPortInfo()
+            const portRes = [initialRes]
+            const portResB = portRes[0]
+            // console.log(portResB)
+            const portSymbToCheckFor = portResB.map(item => item.symbol)
+            const portNameToCheckFor = portResB.map(item => item.name)
+            console.log(portSymbToCheckFor)
+            console.log(portSymbToCheckFor.includes(portSymb))
+            console.log(portNameToCheckFor)
+            console.log(portNameToCheckFor.includes(portName))
+
+            if (portNameToCheckFor.includes(portName)) {
+                setAddPortNameError(`The portfolio name ${portName} has already been used`)
+            } else if (portName == '' || undefined) {
+                setAddPortNameError(`You need to add a name to create a new portfolio`)
+            } else {
+                if (portSymbToCheckFor.includes(portSymb)) {
+                    setAddPortSymbError(`The portfolio symb ${portSymb} has already been used`)
+                } else if  (portSymb == '' || undefined) {
+                    setAddPortSymbError('You need to add a symbol to create a new portfolio')
+                } else {
+                    await addPortToDB()
+                    PopUpClose()
+                }
+            }
+        }
+    
+        const addPortToDB = async () => {
+            const portRes = {
+                symbol: portSymb,
+                name: portName
+                //We are deleting synbName Check so this should be portfolio name while we create stockName usestate variable
+                // name: symbNameCheck
+            }
+            console.log(portRes)
+    
+            await fetch('http://localhost:4000/api/portfolio/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify(portRes)
+            })
+    
+            window.location.reload()
+        }
+
+        if (portSubmitted) {
+            checkIfNameIsUnique()
+            setPortSubmitted(false)
+        }
+    }, [portSubmitted]);
+
     
 
     return (
@@ -316,7 +440,7 @@ const AddPopUp = ({closePopUp}) => {
                                 <img src={close_btn} alt="" onClick={PopUpClose} className="cursor-pointer"/>
                             </div>
 
-                            <form action="" className="text-gho-blue space-y-12 py-4" onSubmit={addPortToDB}>
+                            <form action="" className="text-gho-blue space-y-12 py-4" onSubmit={handleAddPortSubmit}>
                                 <div>
                                     <label className="text-gho-blue text-2xl text-nowrap">Portfolio Name:</label> <br />
                                     <input 
@@ -324,8 +448,7 @@ const AddPopUp = ({closePopUp}) => {
                                         name="" 
                                         id="text_field_space" 
                                         className="border-2 border-gho-blue rounded-lg h-10 w-72"
-                                        //We are deleting synbName Check so this should be portfolio name while we create stockName usestate variable
-                                        // onChange={(e) => setSymbNameCheck(e.target.value)}
+                                        onChange={(e) => setPortName(e.target.value)}
                                     />
                                     <p className="h-16 text-gho-red">{addPortNameError}</p>
                                 </div>
@@ -336,7 +459,7 @@ const AddPopUp = ({closePopUp}) => {
                                         name="" 
                                         id="text_field_space" 
                                         className="border-2 border-gho-blue rounded-lg h-10 w-72" 
-                                        onChange={(e) => setSymbCheck(e.target.value)}
+                                        onChange={(e) => setPortSymb(e.target.value)}
                                     />
                                     <p className="h-16 text-gho-red">{addPortSymbError}</p>
                                 </div>
@@ -359,25 +482,50 @@ const AddPopUp = ({closePopUp}) => {
                             </div>
 
 
-                            <form action="" className="text-gho-blue space-y-12 py-4">
+                            <form action="" className="text-gho-blue space-y-12 py-4" onSubmit={handleAddStockToPortSubmit}>
                                 <div>
                                     <label className="text-gho-blue text-2xl text-nowrap">Portfolio Name:</label> <br />
-                                    <select name="portfolios" id="portfolios" className="border-2 border-gho-blue rounded-lg h-10 w-72">
-                                        <option value="portfolio_1">Portfolio 1</option>
-                                        <option value="portfolio_2">Portfolio 2</option>
+                                    <select 
+                                        name="portfolios" 
+                                        id="portfolios" 
+                                        className="border-2 border-gho-blue rounded-lg h-10 w-72"
+                                        onChange={(e) => {
+                                                setStockToPortportError('')   
+                                                setStockToPortportfolio(e.target.value)
+                                            }
+                                        }
+                                    >
+                                        <option value="portfolio_name">Portfolio Name</option>
+                                    {
+                                        portOptions.map(
+                                            (portfolioName, index) => {
+                                                return (
+                                                    <option key={index} value={portfolioName}>{portfolioName}</option>
+                                                )
+                                            }
+                                        )
+                                    }
+        
+                                        {/* <option value="portfolio_2">Portfolio 2</option>
                                         <option value="portfolio_3">Portfolio 3</option>
-                                        <option value="portfolio_4">Portfolio 4</option>
+                                        <option value="portfolio_4">Portfolio 4</option> */}
                                     </select>
-                                </div>
-                                <div>
-                                    <label className="text-gho-blue text-2xl text-nowrap">Stock Name:</label> <br />
-                                    <input type="text" name="" id="text_field_space" className="border-2 border-gho-blue rounded-lg h-10 w-72" />
-                                    <p className="h-16">Error messages go here</p>
+                                    <p className="h-16 text-gho-red">{stockToPortportError}</p>
                                 </div>
                                 <div>
                                     <label className="text-gho-blue text-2xl text-nowrap">Stock Symbol:</label> <br />
-                                    <input type="text" name="" id="text_field_space" className="border-2 border-gho-blue rounded-lg h-10 w-72" />
-                                    <p className="h-16">Error messages go here</p>
+                                    <input 
+                                        type="text" 
+                                        name="" 
+                                        id="text_field_space" 
+                                        className="border-2 border-gho-blue rounded-lg h-10 w-72" 
+                                        onChange={(e) => {
+                                            setStockToPortstockError('')
+                                            setStockToPortstock(e.target.value)
+                                            }
+                                        }
+                                    />
+                                    <p className="h-16 text-gho-red">{stockToPortstockError}</p>
                                 </div>
                                 <div className="w-72 flex justify-end">
                                     <input type="submit" value="ADD" className="border-2 border-gho-blue rounded-lg h-10 w-36"/>
