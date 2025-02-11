@@ -4,7 +4,8 @@ const {
     getPortfolio,
     createPortfolio,
     deletePortfolio,
-    updatePortfolio
+    updatePortfolio,
+    deletePortfolioProfile
 } = require('../controller/portfolioController')
 
 const router = express.Router()
@@ -18,5 +19,7 @@ router.post('/', createPortfolio)
 router.delete('/:id', deletePortfolio)
 
 router.patch('/:id', updatePortfolio)
+
+router.patch('/deleteProfile/:id', deletePortfolioProfile)
 
 module.exports = router

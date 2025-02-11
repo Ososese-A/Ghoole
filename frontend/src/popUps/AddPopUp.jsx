@@ -2,6 +2,7 @@ import close_btn from "../assets/close.svg"
 import add_btn from "../assets/addPopUp.svg"
 import back from "../assets/back.svg"
 import { useEffect, useState } from "react"
+import getSectorIndustry from "../helpers/getSectorIndustry"
 
 
 const AddPopUp = ({closePopUp}) => {
@@ -208,7 +209,14 @@ const AddPopUp = ({closePopUp}) => {
                         if (symbToCheckFor.includes(symbCheck)) {
                             setAddStockError(`Stock Already added!`)
                         } else {
-                            await addToDB(addToDBSymb, addToDBStockName)
+                            //get the sector and industry then add it to the db data symbRes
+                            const secInd = await getSectorIndustry("WKHS")
+                            console.log(secInd)
+                            const industry = secInd.data.company_industry
+                            console.log(industry)
+                            const sector = secInd.data.company_sector
+                            console.log(sector)
+                            await addToDB(addToDBSymb, addToDBStockName, sector, industry)
                             PopUpClose()
                         }
                     }
@@ -259,7 +267,14 @@ const AddPopUp = ({closePopUp}) => {
                         if (symbToCheckFor.includes(symbCheck)) {
                             setAddStockError(`Stock Already added!`)
                         } else {
-                            await addToDB(addToDBSymb, addToDBStockName)
+                            //get the sector and industry then add it to the db data symbRes
+                            const secInd = await getSectorIndustry(symbCheck)
+                            console.log(secInd)
+                            const industry = secInd.data.company_industry
+                            console.log(industry)
+                            const sector = secInd.data.company_sector
+                            console.log(sector)
+                            await addToDB(addToDBSymb, addToDBStockName, sector, industry)
                             PopUpClose()
                         }
                     }
@@ -272,11 +287,14 @@ const AddPopUp = ({closePopUp}) => {
         }
 
 
-        const addToDB = async  (symb, stockName) => {
+        const addToDB = async  (symb, stockName, sector, industry) => {
             const symbRes = 
             {
                 symb,
-                stockName}
+                stockName,
+                industry,
+                sector
+            }
             console.log(`This log goes before we send it to the DB: ${{symbRes}}`)
     
             await fetch('http://localhost:4000/api/stock/', {
@@ -354,8 +372,6 @@ const AddPopUp = ({closePopUp}) => {
             setPortSubmitted(false)
         }
     }, [portSubmitted]);
-
-    
 
     return (
         <>

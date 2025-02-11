@@ -67,8 +67,7 @@ const getSample = async (req, res) => {
 //     }
 // }
 const addStock = async (req, res) => {
-    const {symb} = req.body
-    const {stockName} = req.body
+    const {symb, stockName, sector, industry} = req.body
     console.log(symb)
     console.log(stockName)
 
@@ -84,7 +83,7 @@ const addStock = async (req, res) => {
     // }
 
     try {
-        const stock = await Stocks.create({symb, stockName})
+        const stock = await Stocks.create({symb, stockName, sector, industry})
         res.status(200).json({stock})
     } catch (error) {
         res.status(400).json({error: error.message})

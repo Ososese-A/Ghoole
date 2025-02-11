@@ -15,7 +15,15 @@ const stockSchema = new Schema({
         
         portfolio: {
             type: Schema.Types.ObjectId,
-        }
+        },
+
+        industry: {
+            type: String
+        },
+
+        sector: {
+            type: String
+        },
     }, {
         timestamps: true
     })

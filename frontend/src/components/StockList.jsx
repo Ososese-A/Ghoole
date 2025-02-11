@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Tile from "./Tile";
 import GroupTile from "./GroupTile";
 import SumValue from "./SumValue";
+import FilterSection from "./FilterSection";
 
 const StockList = () => {
     const [symbs, setSymbs] = useState([])
@@ -27,7 +28,7 @@ const StockList = () => {
                 const response = await fetch(url, options)
                 const result = await response.json();
                 setSymbs(result);
-                // console.log(result);
+                console.log(result);
             } catch (error) {
                 console.error(error);
             }
@@ -113,6 +114,9 @@ const StockList = () => {
     const total_change = totalStockChange?.toFixed(2)
     const total_percent = totalStockPercent?.toFixed(2)
 
+
+    
+
     return ( 
         <>
         <SumValue 
@@ -157,6 +161,10 @@ const StockList = () => {
                             }
                         )
                     }
+                </div>
+
+                <div>
+                    <FilterSection />
                 </div>
             </div>
         </div>

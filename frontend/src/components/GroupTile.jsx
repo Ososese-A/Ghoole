@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import getPortProfile from "../helpers/getPortProfile"
-import fetchFromRealTime from "../helpers/fetchFromRealTime"
 import getStockSymbs from "../helpers/getStockSymbs"
+import processFetchedData from "../helpers/processFetchesData"
 
 
 const GroupTile = ({port_symbol, port_name, port_id}) => {
@@ -17,22 +17,6 @@ const GroupTile = ({port_symbol, port_name, port_id}) => {
 
 
 
-
-    const processFetchedData =async (dataToProcess) => {
-        try {
-            const data = await fetchFromRealTime(dataToProcess)
-            const price = parseFloat(data.body[0]?.regularMarketPrice)
-            // console.log(price)
-            const price_change = parseFloat(data.body[0]?.regularMarketChange)
-            // console.log(price_change)
-            const price_percent = parseFloat(data.body[0]?.regularMarketChangePercent)
-            // console.log(price_percent)
-            return { price, price_change, price_percent }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     useEffect(() => {
 
         //find out which portfolio this is 
@@ -43,37 +27,6 @@ const GroupTile = ({port_symbol, port_name, port_id}) => {
         }
 
         //fetch all of values we need from the stocks in the portfolio
-        // const fetchProfileData = async (stockProfile) => {
-        //     // console.log(`This log is from fetchProfiledata ${stockProfile} ${stockProfile.length}`)
-        //     if (stockProfile.length > 0) {
-        //         const data = await getStockSymbs()
-        //         // console.log(stockProfile)
-
-        //         // console.log(data)
-
-        //         const profileSymbols = []
-
-        //         stockProfile.forEach(async stockId => {
-        //             data.forEach(async item  => {
-        //                 if (item._id == stockId) {
-        //                     const fetched = await processFetchedData(item.symb)
-        //                     // console.log(fetched)
-        //                     const profileItemData = [item.symb, fetched]
-        //                     profileSymbols.push(profileItemData)
-        //                 }
-        //             })
-        //         })
-
-        //         // console.log(profileSymbols)
-        //         getTheSumation(profileSymbols)
-        //     } else {
-        //         // console.log(`It works but it is less than zero ${stockProfile.length}`)
-        //     }
-        // }
-
-
-
-
         const fetchProfileData = async (stockProfile) => {
             if (stockProfile.length > 0) {
                 const data = await getStockSymbs();
@@ -92,7 +45,7 @@ const GroupTile = ({port_symbol, port_name, port_id}) => {
                 console.log('profileSymbols:', profileSymbols);
                 getTheSumation(profileSymbols);
             } else {
-                console.log(`It works but it is less than zero ${stockProfile.length}`);
+                // console.log(`It works but it is less than zero ${stockProfile.length}`);
             }
         };
 
@@ -101,17 +54,17 @@ const GroupTile = ({port_symbol, port_name, port_id}) => {
 
         //sum it all up and set the values
         const getTheSumation = (profileSymbols) => {
-            console.log(profileSymbols)
+            // console.log(profileSymbols)
             let totalPrice = 0
             let totalPriceChange = 0
             let totalPricePercent = 0
 
             // console.log(!Array.isArray(profileSymbols))
             // console.log(!Array.isArray(pS))
-            console.log(profileSymbols)
+            // console.log(profileSymbols)
 
             profileSymbols.forEach(item => {
-                console.log('hello')
+                // console.log('hello')
                 const {price, price_change, price_percent} = item[1];
 
                     totalPrice += parseFloat(price)
@@ -131,7 +84,7 @@ const GroupTile = ({port_symbol, port_name, port_id}) => {
                 finalPricePercent
             }
 
-            console.log(res)
+            // console.log(res)
             setSumedValues(res)
         }
 
