@@ -11,10 +11,12 @@ const Tile = ({db_symbol, stockTotal, stockChange, stockPercent}) => {
             data => {
                 // console.log(data.body[0])
                 setRealTimeStockData(data.body[0])
+                const symbolName = data.body[0]?.longName
+                const symbolsymb = data.body[0]?.symbol
                 const total = parseFloat(data.body[0]?.regularMarketPrice)
                 const total_change = parseFloat(data.body[0]?.regularMarketChange)
                 const total_percent = parseFloat(data.body[0]?.regularMarketChangePercent)
-                stockTotal(total)
+                stockTotal(total, symbolName, symbolsymb)
                 // console.log(`This is the total from tile ${total}`)
                 stockChange(total_change)
                 // console.log(`This is the total change from tile ${total_change}`)

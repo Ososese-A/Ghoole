@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import getFilterSymbol from "../helpers/getFilterSymbol";
 import getStockSymbs from "../helpers/getStockSymbs";
-import { useNavigate } from "react-router-dom";
 import processFetchedData from "../helpers/processFetchesData";
 import SectorFilterTile from "./SectorFilterTile";
 import IndustryFilterTile from "./IndustryFilterTile";
+import useStockFilterContext from "../hooks/useStockFilterContext";
+import { TileViewContext } from "./StockList";
 
 
 const FilterSection = () => {
@@ -272,48 +273,52 @@ const FilterSection = () => {
     }, [])
 
 
-
+    const {sectorView, industryView} = useContext(TileViewContext)
 
 
 
     return ( 
         <>
-                    {
-                        sectorTileValues.map((values, index) => {
-                            return (
-                                <SectorFilterTile 
-                                    key={index}
-                                    sector={values.theSector} 
-                                    symbol={values.theSectorSymb} 
-                                    price={values.finalTotalPrice}
-                                    change={values.finalTotalPriceChange}
-                                    percent={values.finalTotalPricePercnet}
-                                    date={currentDate}
-                                    time={currentTime}
-                                    stocksArr={values.stocksInSector}
-                                />
-                            )
-                        })
-                    }
+                    <div className={sectorView == true ? "block" : "hidden"}>
+                        {
+                            sectorTileValues.map((values, index) => {
+                                return (
+                                    <SectorFilterTile 
+                                        key={index}
+                                        sector={values.theSector} 
+                                        symbol={values.theSectorSymb} 
+                                        price={values.finalTotalPrice}
+                                        change={values.finalTotalPriceChange}
+                                        percent={values.finalTotalPricePercnet}
+                                        date={currentDate}
+                                        time={currentTime}
+                                        stocksArr={values.stocksInSector}
+                                    />
+                                )
+                            })
+                        }
+                    </div>
 
-                    {
-                        industryTileValues.map((values, index) => {
-                            return (
-                                <IndustryFilterTile 
-                                    // key={values.theIndustry}
-                                    key={index}
-                                    industry={values.theIndustry} 
-                                    symbol={values.theIndustrySymb} 
-                                    price={values.finalTotalPrice}
-                                    change={values.finalTotalPriceChange}
-                                    percent={values.finalTotalPricePercnet}
-                                    date={currentDate}
-                                    time={currentTime}
-                                    stocksArr={values.stocksInIndustry}
-                                />
-                            )
-                        })
-                    }
+                    <div className={industryView == true ? "block" : "hidden"}>
+                        {
+                            industryTileValues.map((values, index) => {
+                                return (
+                                    <IndustryFilterTile 
+                                        // key={values.theIndustry}
+                                        key={index}
+                                        industry={values.theIndustry} 
+                                        symbol={values.theIndustrySymb} 
+                                        price={values.finalTotalPrice}
+                                        change={values.finalTotalPriceChange}
+                                        percent={values.finalTotalPricePercnet}
+                                        date={currentDate}
+                                        time={currentTime}
+                                        stocksArr={values.stocksInIndustry}
+                                    />
+                                )
+                            })
+                        }
+                    </div>
         </>
      );
 }

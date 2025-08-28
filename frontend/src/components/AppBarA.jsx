@@ -3,6 +3,7 @@ import logo from "../assets/logo.svg"
 import settings from "../assets/settings.svg"
 import { useState } from "react"
 import ComingSoon from "../popUps/ComingSoon"
+import SettingsPopUp from "../popUps/SettingsPopUp"
 
 const AppBarA = () => {
     const [visibility, setVisibility] = useState(false)
@@ -38,7 +39,7 @@ const AppBarA = () => {
         </nav>
 
         <div className={visibility == true ? "block" : "hidden"}>
-        <ComingSoon closePopUp={closePopUp} />
+        <SettingsPopUp closePopUp={closePopUp} />
         </div>
         </>
      );

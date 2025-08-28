@@ -1,35 +1,37 @@
-import { createContext, useReducer } from "react"
+import { createContext, useReducer } from "react";
 
 export const StockFilterContext = createContext()
 
-export const stockFilterReducer = (state, action) => {
+export const stockFilterContextReducer = (state, action) => {
     switch (action.type) {
-        case 'SET_FILTER_INFO':
-            return {
-                info: action.payload
-            }
-        case 'CREATE_FILTER_INFO':
-            return {
-                info: [action.payload, ...state.info]
-            }
-        case 'DELETE_FILTER_INFO':
-            return {
-                info: state.info.filter((i) => i.sector !== action.payload.sector)
-            }
+        case 'PORTFOLIO':
+            return {stockFilter: 'portfolio'}
+        case 'SECTOR':
+            return {stockFilter: 'sector'}
+        case 'INDUSTRY':
+            return {stockFilter: 'industry'}
+        case 'PRICE':
+            return {stockFilter: 'price'}
+        case 'NAME':
+            return {stockFilter: 'name'}
+        case 'ADDED':
+            return {stockFilter: 'added'}
         default:
-            return state
+            return {stockFilter: null}
     }
 }
 
 export const StockFilterContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(
-        stockFilterReducer,
-        {finterInfo: null}
+        stockFilterContextReducer,
+        {stockFilter: null}
     )
 
-    return (
-        <StockFilterContext.Provider value={{...state, dispatch}}>
+    return ( 
+        <StockFilterContext.Provider value={{state, dispatch}}>
             {children}
         </StockFilterContext.Provider>
-    )
+     );
 }
+ 
+export default StockFilterContextProvider;

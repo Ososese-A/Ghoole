@@ -1,118 +1,91 @@
 import filter_b from "../assets/filter_b.svg"
 import filtering from "../assets/filtering.svg"
 import close_btn from "../assets/close.svg"
-import { useState } from "react"
-import sortUp from "../assets/sortUp.svg"
-import sortDown from "../assets/sortDown.svg"
+import SortToggleItem from "../components/SortToggleItem"
+import useStockFilterContext from "../hooks/useStockFilterContext"
 
 const SortPopUp = ({closePopUp}) => {
-    const [optionsView, setOptionsView] = useState()
-    const [sorticon, setSortIcon] = useState(false)
+    const {dispatch} = useStockFilterContext()
+    const {state} = useStockFilterContext()
 
     const PopUpClose = () => {
         closePopUp(false)
     }
 
-    const toggleSortUpDown = () => {
-        sorticon == false ? setSortIcon(true) : setSortIcon(false)
+    const toggleAllView = () => {
+        dispatch({type: ''})
+        console.log(state.stockFilter)
+        PopUpClose()
     }
-
-    const toggleAllView = () => {}
-    const togglePortfolioView = () => {}
-    const toggleSectorView = () => {}
-    const toggleIndustryView = () => {}
-    const togglePriceView = () => {}
-    const toggleNameView = () => {}
-    const toggleAddedView = () => {}
+    const togglePortfolioView = () => {
+        dispatch({type: 'PORTFOLIO'})
+        console.log(state.stockFilter)
+        PopUpClose()
+    }
+    const toggleSectorView = () => {
+        dispatch({type: 'SECTOR'})
+        console.log(state.stockFilter)
+        PopUpClose()
+    }
+    const toggleIndustryView = () => {
+        dispatch({type: 'INDUSTRY'})
+        console.log(state.stockFilter)
+        PopUpClose()
+    }
+    const togglePriceView = () => {
+        dispatch({type: 'PRICE'})
+        console.log(state.stockFilter)
+        PopUpClose()
+    }
+    const toggleNameView = () => {
+        dispatch({type: 'NAME'})
+        console.log(state.stockFilter)
+        PopUpClose()
+    }
+    const toggleAddedView = () => {
+        dispatch({type: 'ADDED'})
+        console.log(state.stockFilter)
+        PopUpClose()
+    }
 
     return (
         <>
         <div className="relative">
             <div className="pop_up">
-                <div className={optionsView == false ? "hidden" : "block"}>
+                <div>
                         <div className="bg-gho-white border-2 rounded-xl w-96 px-8 py-6">
                             <div className="flex items-center justify-end space-x-36 mb-4">
                                 <div className="flex space-x-8">
                                     <img src={filter_b} alt="" />
-                                    <p className="text-gho-blue text-2xl text-nowrap">New Addition</p> 
+                                    <p className="text-gho-blue text-2xl text-nowrap">Sort By</p> 
                                 </div>
                                 <img src={close_btn} alt="" onClick={PopUpClose} className="cursor-pointer"/>
                             </div>
                             <div className="mx-auto w-80 text-xl">
-                                <div className="flex space-x-10">
+                                <div className="flex space-x-10" onClick={toggleAllView}>
                                     <img src={filtering} alt=""/> 
-                                    <p 
-                                        className="text-gho-blue py-1 cursor-pointer" 
-                                        onClick={toggleAllView}
-                                    >
-                                        All
-                                    </p>
+                                    <p className="text-gho-blue py-1 cursor-pointer"> All </p>
                                 </div>
-                                <div className="flex space-x-10">
+                                <div className="flex space-x-10" onClick={togglePortfolioView}>
                                     <img src={filtering} alt=""/> 
-                                    <p 
-                                        className="text-gho-blue py-1 cursor-pointer"
-                                        onClick={togglePortfolioView}
-                                    >
-                                        Portfolio
-                                    </p>
+                                    <p className="text-gho-blue py-1 cursor-pointer">Portfolio </p>
                                 </div>
-                                <div className="flex space-x-10">
+                                <div className="flex space-x-10" onClick={toggleSectorView}>
                                     <img src={filtering} alt=""/> 
-                                    <p 
-                                        className="text-gho-blue py-1 cursor-pointer"
-                                        onClick={toggleSectorView}
-                                    >
-                                        Sector
-                                    </p>
+                                    <p className="text-gho-blue py-1 cursor-pointer"> Sector  </p>
                                 </div>
-                                <div className="flex space-x-10">
+                                <div className="flex space-x-10" onClick={toggleIndustryView}>
                                     <img src={filtering} alt=""/> 
-                                    <p 
-                                        className="text-gho-blue py-1 cursor-pointer"
-                                        onClick={toggleIndustryView}
-                                    >
-                                        Industry
-                                    </p>
+                                    <p className="text-gho-blue py-1 cursor-pointer"> Industry </p>
                                 </div>
-                                <div className="flex space-x-10">
-                                    <img src={filtering} alt=""/> 
-                                    <div className="flex space-x-8" onClick={toggleSortUpDown}>
-                                        <p 
-                                            className="text-gho-blue py-1 cursor-pointer"
-                                            onClick={togglePriceView}
-                                        >
-                                            Price
-                                        </p>
-
-                                        <img src={sorticon == false ? sortUp : sortDown} alt=""/>
-                                    </div>
+                                <div onClick={togglePriceView}>
+                                    <SortToggleItem sortLabel='Price'/>
                                 </div>
-                                <div className="flex space-x-10">
-                                    <img src={filtering} alt=""/> 
-                                    <div className="flex space-x-8" onClick={toggleSortUpDown}>
-                                        <p 
-                                            className="text-gho-blue py-1 cursor-pointer"
-                                            onClick={toggleNameView}
-                                        >
-                                            Name
-                                        </p>
-
-                                        <img src={sorticon == false ? sortUp : sortDown} alt=""/>
-                                    </div>
+                                <div onClick={toggleNameView}>
+                                    <SortToggleItem sortLabel='Name' />
                                 </div>
-                                <div className="flex space-x-10">
-                                    <img src={filtering} alt=""/> 
-                                    <div className="flex space-x-8" onClick={toggleSortUpDown}>
-                                        <p 
-                                            className="text-gho-blue py-1 cursor-pointer"
-                                            onClick={toggleAddedView}
-                                        >
-                                            Added
-                                        </p>
-
-                                        <img src={sorticon == false ? sortUp : sortDown} alt=""/>
-                                    </div>
+                                <div onClick={toggleAddedView}>
+                                    <SortToggleItem sortLabel='Added' />
                                 </div>
                             </div>
                         </div>
