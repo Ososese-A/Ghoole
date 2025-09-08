@@ -88,11 +88,7 @@ const updatePortfolio = async (req, res) => {
         { $addToSet: {profile: profileAsId} },
         {new: true}
     )
-
-    // if(!portfolio){
-    //     return res.status(404).json({error: 'This Portfolio does not exist'})
-    // }
-
+    
     res.status(201).json(portfolio)
 }
 

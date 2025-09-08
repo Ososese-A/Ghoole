@@ -19,6 +19,8 @@ const SettingsPopUp = ({closePopUp}) => {
 
     const [portList, setPortList] = useState([])
     const [stockList, setStockList] = useState([])
+    const [stockListOutsidePort, setStockListOutsidePort] = useState([])
+    const [stockListwithinPort, setStockListWithinPort] = useState([])
 
 
     // const [editOptions, setEditOptions] = useState([
@@ -93,6 +95,12 @@ const SettingsPopUp = ({closePopUp}) => {
         if (PortToEdit.trim() == "nill" || selectedIndex == undefined) {
             setPortToEditError("You need to select a portfolio name and an edit option to go to the next page")
         } else {
+            const interim = portList.find(i => i.symbol == PortToEdit)
+            const stocksToAddToPort = stockList.filter(j => !(interim.stocks.includes(j._id)))
+            const stockToDeleteFromPort = stockList.filter(j => interim.stocks.includes(j._id))
+            console.log()
+            setStockListOutsidePort(stocksToAddToPort)
+            setStockListWithinPort(stockToDeleteFromPort)
             setPortToEditError("")
             setPortEditFormSubmitted(true)
         }
@@ -175,10 +183,32 @@ const SettingsPopUp = ({closePopUp}) => {
         }
     }
 
-    const addStockToPortService = () => {
+    const addStockToPortService = async () => {
+        const portfolioId = PortToEdit.id
+        const stock = stockList.find( i => symbolToAdd == i.symb)
+        console.log("Stock")
+        console.log(stock)
+        console.log(stockList)
+        console.log(symbolToAdd)
+        const stockId = stock._id
+        const profileRes = {
+            profile : stockId
+        }
+        console.log(`This log goes before we send it to the DB: ${{portfolioId}}`)
+
         try {
             //db logic goes here
-            console.log(symbolToAdd)
+            await fetch(`http://localhost:4000/api/portfolio/${portfolioId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify(profileRes)
+            })
+
+            console.log(`This is the id: ${portfolioId} and this is the stock ${stockId}`)
+
+            window.location.reload()
         } catch (err) {
             console.log(err)
         } finally {
@@ -186,10 +216,50 @@ const SettingsPopUp = ({closePopUp}) => {
         }
     }
 
-    const deleteStockFromPortService = () => {
+    const deleteStockFromPortService = async () => {
+        const portfolioId = PortToEdit.id
+        const stock = stockList.find( i => symbolToDel == i.symb)
+        console.log("Stock")
+        console.log(stock)
+        console.log(stockList)
+        console.log(symbolToDel)
+        const stockId = stock._id
+        const profileRes = {
+            profile : stockId
+        }
+        try {
+           //db logic goes here
+            await fetch(`http://localhost:4000/api/portfolio/deleteProfile/${portfolioId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify(profileRes)
+            })
+
+            console.log(`This is the id: ${portfolioId} and this is the stock ${stockId}`)
+
+            window.location.reload()
+        } catch (err) {
+            console.log(err)
+        } finally {
+            PopUpClose()
+        }
+    }
+
+    const deletePortfolioService = async (portfolioId) => {
+        console.log(`This is the id: ${portfolioId}`)
+
         try {
             //db logic goes here
-            console.log(symbolToDel)
+            await fetch(`http://localhost:4000/api/portfolio/${portfolioId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+            })
+
+            window.location.reload()
         } catch (err) {
             console.log(err)
         } finally {
@@ -197,21 +267,19 @@ const SettingsPopUp = ({closePopUp}) => {
         }
     }
 
-    const deletePortfolioService = () => {
-        try {
-            //db logi goes here
-            console.log(portToDelete)
-        } catch (err) {
-            console.log(err)
-        } finally {
-            PopUpClose()
-        }
-    }
+    const deleteStockService = async (stockId) => {
+        console.log(`This is the id: ${stockId}`)
 
-    const deleteStockService = () => {
         try {
-            //db logi goes here
-            console.log(stockToDelete)
+            //db logic goes here
+            await fetch(`http://localhost:4000/api/stock/${stockId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+            })
+
+            window.location.reload()
         } catch (err) {
             console.log(err)
         } finally {
@@ -239,6 +307,7 @@ const SettingsPopUp = ({closePopUp}) => {
             console.log(portResB)
             const portOptionsList = portResB.map(item => {
                 return {
+                    id: item._id,
                     name: item.name,
                     symbol: item.symbol,
                     stocks: item.profile
@@ -257,19 +326,32 @@ const SettingsPopUp = ({closePopUp}) => {
         }
 
         try {
-            getPortOptions()
             getStocks()
+            getPortOptions()
         } catch (error) {
             console.error(error)
         }
     }, [])
 
     useEffect(() => {
+        const stocksFromPortinterim = portList.map( i => ({
+            stocks: stockList.filter(j => i.stocks.includes(j._id))
+        }))
+
+        console.log("PortList useEffect")
+        console.log(stocksFromPortinterim)
+    }, [portList])
+
+    useEffect(() => {
         console.log(PortToEdit)
         console.log(editOptions[selectedIndex])
+        console.log("portList")
+        console.log(portList)
+
         if (portEditFormSubmitted == true) {
             const interim = PortToEdit.trim().split("-")
-            setPortToEdit(interim[0])
+            const portfolio = portList.find((i) => i.symbol == interim[0])
+            setPortToEdit(portfolio)
             nextEditPage()
         }
     }, [portEditFormSubmitted])
@@ -279,11 +361,15 @@ const SettingsPopUp = ({closePopUp}) => {
         if (addToPortSubmitted == true) {
             const interim = stockToEdit.split(" - ")
             setSymbolToAdd(interim[0])
-            addStockToPortService()
+            console.log("PortToEdit")
+            console.log(PortToEdit)
         }
 
-
     }, [addToPortSubmitted])
+
+    useEffect(() => {
+        addStockToPortService()
+    }, [symbolToAdd])
 
     useEffect(() => {
         // console.log(stockToEdit)
@@ -297,10 +383,17 @@ const SettingsPopUp = ({closePopUp}) => {
     }, [deleteFromPortSubmitted])
 
     useEffect(() => {
+        deleteStockFromPortService()
+    }, [symbolToDel])
+
+    useEffect(() => {
         if (deletePortSubmitted == true) {
             const interim = portToDelete.trim().split("-")
-            setPortToDelete(interim[0])
-            deletePortfolioService()
+            const portfolio = portList.find(i => interim == i.symbol)
+            const portfolioId = portfolio.id
+            console.log(`This is the id: ${portfolioId}`)
+            console.log("Above is from the delete Port submitted useEffect")
+            deletePortfolioService(portfolioId)
         }
     }, [deletePortSubmitted])
 
@@ -308,7 +401,11 @@ const SettingsPopUp = ({closePopUp}) => {
         if (deleteStockSubmitted == true) {
             const interim = stockToDelete.trim().split("-")
             setStockToDelete(interim[0])
-            deleteStockService()
+            const stock = stockList.find(i => interim == i.symb)
+            const stockId = stock._id
+            console.log(`This is the id: ${stockId}`)
+            console.log("Above is from the delete delete stock submitted useEffect")
+            deleteStockService(stockId)
         }
     }, [deleteStockSubmitted])
 
@@ -445,7 +542,7 @@ const SettingsPopUp = ({closePopUp}) => {
                                 >
                                     <option value="stock_name">[SYMB] Stock Name</option>
                                 {
-                                    stockList.map(
+                                    stockListOutsidePort.map(
                                         (stock, index) => {
                                             const val = `${stock.symb} - ${stock.stockName}`
                                             return (
@@ -481,7 +578,7 @@ const SettingsPopUp = ({closePopUp}) => {
                                 >
                                     <option value="stock_name">[SYMB] Stock Name</option>
                                 {
-                                    stockList.map(
+                                    stockListwithinPort.map(
                                         (stock, index) => {
                                             const val = `${stock.symb} - ${stock.stockName}`
                                             return (
